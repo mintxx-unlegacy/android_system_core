@@ -817,7 +817,9 @@ static void export_kernel_boot_props() {
         { "ro.boot.mode",       "ro.bootmode",   "unknown", },
         { "ro.boot.baseband",   "ro.baseband",   "unknown", },
         { "ro.boot.bootloader", "ro.bootloader", "unknown", },
+#if !defined(SPRD_HARDWARE)
         { "ro.boot.hardware",   "ro.hardware",   "unknown", },
+#endif
 #ifndef IGNORE_RO_BOOT_REVISION
         { "ro.boot.revision",   "ro.revision",   "0", },
 #endif
@@ -827,6 +829,9 @@ static void export_kernel_boot_props() {
         int rc = property_get(prop_map[i].src_prop, value);
         property_set(prop_map[i].dst_prop, (rc > 0) ? value : prop_map[i].default_value);
     }
+#if defined(SPRD_HARDWARE)
+    property_set("ro.hardware", TARGET_BOARD_PLATFORM);
+#endif
 }
 
 static void process_kernel_dt(void)
