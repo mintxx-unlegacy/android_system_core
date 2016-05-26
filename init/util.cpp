@@ -401,6 +401,37 @@ void open_devnull_stdio(void)
     }
 }
 
+#ifdef NEEDS_PROP_INIT_HACK
+void get_hardware_name(char *hardware, unsigned int *revision) {
+  FILE* fp = fopen("/proc/cpuinfo", "re");
+  if (fp == NULL) {
+    return;
+  }
+  char buf[1024];
+  while (fgets(buf, sizeof(buf), fp) != NULL) {
+    if (strncmp(buf, "Hardware", 8) == 0) {
+      const char* hw = strstr(buf, ": ");
+      if (hw) {
+        hw += 2;
+        size_t n = 0;
+        while (*hw) {
+          if (!isspace(*hw)) {
+            hardware[n++] = tolower(*hw);
+          }
+          hw++;
+          if (n == 31) break;
+        }
+        hardware[n] = 0;
+      }
+    } else if (strncmp(buf, "Revision", 8) == 0) {
+      sscanf(buf, "Revision : %ux", revision);
+    }
+  }
+  fclose(fp);
+}
+#endif
+
+
 void import_kernel_cmdline(bool in_qemu, std::function<void(char*,bool)> import_kernel_nv)
 {
     char cmdline[2048];

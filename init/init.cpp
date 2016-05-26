@@ -91,6 +91,11 @@ bool waiting_for_exec = false;
 
 static int epoll_fd = -1;
 
+#ifdef NEEDS_PROP_INIT_HACK
+static char hardware[32];
++static unsigned revision = 0;
+#endif
+
 void register_epoll_handler(int fd, void (*fn)()) {
     epoll_event ev;
     ev.events = EPOLLIN;
@@ -806,6 +811,10 @@ static void import_kernel_nv(char *name, bool for_emulator)
 }
 
 static void export_kernel_boot_props() {
+#ifdef NEEDS_PROP_INIT_HACK
+	char tmp[PROP_VALUE_MAX];
+    int ret;
+#endif
     struct {
         const char *src_prop;
         const char *dst_prop;
@@ -816,8 +825,10 @@ static void export_kernel_boot_props() {
 #endif
         { "ro.boot.mode",       "ro.bootmode",   "unknown", },
         { "ro.boot.baseband",   "ro.baseband",   "unknown", },
+#ifndef NEEDS_PROP_INIT_HACK
         { "ro.boot.bootloader", "ro.bootloader", "unknown", },
         { "ro.boot.hardware",   "ro.hardware",   "unknown", },
+#endif
 #ifndef IGNORE_RO_BOOT_REVISION
         { "ro.boot.revision",   "ro.revision",   "0", },
 #endif
@@ -827,6 +838,22 @@ static void export_kernel_boot_props() {
         int rc = property_get(prop_map[i].src_prop, value);
         property_set(prop_map[i].dst_prop, (rc > 0) ? value : prop_map[i].default_value);
     }
+    +
+   get_hardware_name(hardware, &revision);
+
+   /* if this was given on kernel command line, override what we read
+    * before (e.g. from /proc/cpuinfo), if anything */
+#ifdef NEEDS_PROP_INIT_HACK
+   ret = property_get("ro.boot.hardware", tmp);
+   if (ret)
+       strlcpy(hardware, tmp, sizeof(hardware));
+   property_set("ro.hardware", hardware);
+
+   ret = property_get("ro.boot.revision", tmp);
+   if (!ret)
+       snprintf(tmp, PROP_VALUE_MAX, "%d", revision);
+   property_set("ro.revision", tmp);
+#endif
 }
 
 static void process_kernel_dt(void)
