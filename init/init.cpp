@@ -838,12 +838,12 @@ static void export_kernel_boot_props() {
         int rc = property_get(prop_map[i].src_prop, value);
         property_set(prop_map[i].dst_prop, (rc > 0) ? value : prop_map[i].default_value);
     }
-    +
+
+#ifdef NEEDS_PROP_INIT_HACK
    get_hardware_name(hardware, &revision);
 
    /* if this was given on kernel command line, override what we read
     * before (e.g. from /proc/cpuinfo), if anything */
-#ifdef NEEDS_PROP_INIT_HACK
    ret = property_get("ro.boot.hardware", tmp);
    if (ret)
        strlcpy(hardware, tmp, sizeof(hardware));
