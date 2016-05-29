@@ -46,6 +46,7 @@ LOCAL_SRC_FILES:= \
     property_service.cpp \
     signal_handler.cpp \
     ueventd.cpp \
+    util.cpp \
     ueventd_parser.cpp \
     watchdogd.cpp \
     vendor_init.cpp
