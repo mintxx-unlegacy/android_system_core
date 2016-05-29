@@ -93,7 +93,7 @@ static int epoll_fd = -1;
 
 #ifdef NEEDS_PROP_INIT_HACK
 static char hardware[32];
-+static unsigned revision = 0;
+static unsigned revision = 0;
 #endif
 
 void register_epoll_handler(int fd, void (*fn)()) {
