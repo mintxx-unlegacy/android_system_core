@@ -337,6 +337,9 @@ static void export_oem_lock_status() {
 static void export_kernel_boot_props() {
 	static char hardware[32];
 	static unsigned revision = 0;
+	
+	int ret;
+	char tmp[128];
     struct {
         const char *src_prop;
         const char *dst_prop;
