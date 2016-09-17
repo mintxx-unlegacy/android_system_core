@@ -338,8 +338,8 @@ static void export_kernel_boot_props() {
 	static char hardware[32];
 	static unsigned revision = 0;
 	
-	int ret;
 	char tmp[128];
+	
     struct {
         const char *src_prop;
         const char *dst_prop;
@@ -362,13 +362,13 @@ static void export_kernel_boot_props() {
 
    /* if this was given on kernel command line, override what we read
     * before (e.g. from /proc/cpuinfo), if anything */
-   ret = property_get("ro.boot.hardware", tmp);
-   if (ret)
+   std::string value = property_get("ro.boot.hardware");
+   if (!value.empty())
        strlcpy(hardware, tmp, sizeof(hardware));
    property_set("ro.hardware", hardware);
 
-   ret = property_get("ro.boot.revision", tmp);
-   if (!ret)
+   std::string value = property_get("ro.boot.revision");
+   if (value.empty())
        snprintf(tmp, PROP_VALUE_MAX, "%d", revision);
    property_set("ro.revision", tmp);
 }
