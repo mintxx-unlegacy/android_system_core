@@ -71,9 +71,6 @@
 struct selabel_handle *sehandle;
 struct selabel_handle *sehandle_prop;
 
-static char hardware[32];
-static unsigned revision = 0;
-
 static int property_triggers_enabled = 0;
 
 static char qemu[32];
@@ -421,6 +418,8 @@ static void export_oem_lock_status() {
 }
 
 static void export_kernel_boot_props() {
+	static char hardware[32];
+	static unsigned revision = 0;
     struct {
         const char *src_prop;
         const char *dst_prop;
