@@ -367,7 +367,7 @@ static void export_kernel_boot_props() {
        strlcpy(hardware, tmp, sizeof(hardware));
    property_set("ro.hardware", hardware);
 
-   std::string value = property_get("ro.boot.revision");
+   value = property_get("ro.boot.revision");
    if (value.empty())
        snprintf(tmp, PROP_VALUE_MAX, "%d", revision);
    property_set("ro.revision", tmp);
