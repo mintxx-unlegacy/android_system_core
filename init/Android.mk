@@ -56,6 +56,10 @@ ifeq ($(TARGET_INIT_PARSE_PROC_CPUINFO),true)
 LOCAL_CFLAGS += -DPARSE_PROC_CPUINFO
 endif
 
+ifeq ($(SERVICES_WITHOUT_SELINUX_DOMAIN),true)
+LOCAL_CFLAGS += -DWITHOUT_SELINUX_DOMAIN
+endif
+
 LOCAL_SRC_FILES:= \
     action.cpp \
     import_parser.cpp \
