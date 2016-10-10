@@ -63,6 +63,8 @@
 #include "signal_handler.h"
 #include "util.h"
 
+using android::base::StringPrintf;
+
 #define chmod DO_NOT_USE_CHMOD_USE_FCHMODAT_SYMLINK_NOFOLLOW
 #define UNMOUNT_CHECK_MS 5000
 #define UNMOUNT_CHECK_TIMES 10
@@ -225,24 +227,39 @@ static void unmount_and_fsck(const struct mntent *entry) {
 }
 
 static int do_class_start(const std::vector<std::string>& args) {
-        /* Starting a class does not start services
-         * which are explicitly disabled.  They must
-         * be started individually.
-         */
+    /* Starting a class does not start services
+     * which are explicitly disabled.  They must
+     * be started individually.
+     */
     ServiceManager::GetInstance().
         ForEachServiceInClass(args[1], [] (Service* s) { s->StartIfNotDisabled(); });
+
+    std::string prop_name = StringPrintf("class_start:%s", args[1].c_str());
+    if (prop_name.length() < PROP_NAME_MAX) {
+        ActionManager::GetInstance().QueueEventTrigger(prop_name);
+    }
     return 0;
 }
 
 static int do_class_stop(const std::vector<std::string>& args) {
     ServiceManager::GetInstance().
         ForEachServiceInClass(args[1], [] (Service* s) { s->Stop(); });
+
+    std::string prop_name = StringPrintf("class_stop:%s", args[1].c_str());
+    if (prop_name.length() < PROP_NAME_MAX) {
+        ActionManager::GetInstance().QueueEventTrigger(prop_name);
+    }
     return 0;
 }
 
 static int do_class_reset(const std::vector<std::string>& args) {
     ServiceManager::GetInstance().
         ForEachServiceInClass(args[1], [] (Service* s) { s->Reset(); });
+
+    std::string prop_name = StringPrintf("class_reset:%s", args[1].c_str());
+    if (prop_name.length() < PROP_NAME_MAX) {
+        ActionManager::GetInstance().QueueEventTrigger(prop_name);
+    }
     return 0;
 }
 
@@ -303,7 +320,12 @@ static int do_mkdir(const std::vector<std::string>& args) {
     /* mkdir <path> [mode] [owner] [group] */
 
     if (args.size() >= 3) {
-        mode = std::stoul(args[2], 0, 8);
+        unsigned long mode_ul;
+        if (sscanf(args[2].c_str(), "%lo", &mode_ul) != 1) {
+            ERROR("mkdir: invalid mode %s\n", args[2].c_str());
+            return -EINVAL;
+        }
+        mode = (mode_t) mode_ul;
     }
 
     ret = make_dir(args[1].c_str(), mode);
@@ -825,8 +847,8 @@ static int do_write(const std::vector<std::string>& args) {
             break;
         } else {
             //Value at current index is -p. The next index would
-            //be the prefix.Skip beyond that.
-            i+=2;
+            //be the prefix.Skip it.
+            i++;
         }
     }
     if (!path || !value) {
