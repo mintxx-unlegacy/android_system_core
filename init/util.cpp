@@ -425,6 +425,7 @@ void open_devnull_stdio(void)
     }
 }
 
+#ifdef PARSE_PROC_CPUINFO
 void get_hardware_name(char *hardware, unsigned int *revision) {
   FILE* fp = fopen("/proc/cpuinfo", "re");
   if (fp == NULL) {
@@ -452,7 +453,7 @@ void get_hardware_name(char *hardware, unsigned int *revision) {
   }
   fclose(fp);
 }
-
+#endif
 
 void import_kernel_cmdline(bool in_qemu,
                            std::function<void(const std::string&, const std::string&, bool)> fn) {
