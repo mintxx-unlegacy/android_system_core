@@ -51,6 +51,11 @@ endif
 
 include $(CLEAR_VARS)
 LOCAL_CPPFLAGS := $(init_cflags)
+
+ifeq ($(TARGET_INIT_PARSE_PROC_CPUINFO),true)
+LOCAL_CFLAGS += -DPARSE_PROC_CPUINFO
+endif
+
 LOCAL_SRC_FILES:= \
     action.cpp \
     import_parser.cpp \
@@ -105,6 +110,10 @@ endif
 
 ifneq ($(TARGET_INIT_UMOUNT_AND_FSCK_IS_UNSAFE),)
 LOCAL_CFLAGS += -DUMOUNT_AND_FSCK_IS_UNSAFE
+endif
+
+ifeq ($(TARGET_INIT_PARSE_PROC_CPUINFO),true)
+LOCAL_CFLAGS += -DPARSE_PROC_CPUINFO
 endif
 
 LOCAL_MODULE:= init
