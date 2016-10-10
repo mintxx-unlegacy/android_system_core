@@ -371,6 +371,12 @@ static void export_kernel_boot_props() {
         { "ro.boot.mode",       "ro.bootmode",   "unknown", },
         { "ro.boot.baseband",   "ro.baseband",   "unknown", },
         { "ro.boot.bootloader", "ro.bootloader", "unknown", },
+#ifndef PARSE_PROC_CPUINFO
+        { "ro.boot.hardware",   "ro.hardware",   "unknown", },
+#ifndef IGNORE_RO_BOOT_REVISION
+        { "ro.boot.revision",   "ro.revision",   "0", },
+#endif
+#else
     };
     for (size_t i = 0; i < ARRAY_SIZE(prop_map); i++) {
         std::string value = property_get(prop_map[i].src_prop);
@@ -391,6 +397,7 @@ static void export_kernel_boot_props() {
    if (value.empty())
        snprintf(tmp, PROP_VALUE_MAX, "%d", revision);
    property_set("ro.revision", tmp);
+#endif //PARSE_PROC_CPUINFO
 }
 
 static void process_kernel_dt() {

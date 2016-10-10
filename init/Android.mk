@@ -51,6 +51,11 @@ endif
 
 include $(CLEAR_VARS)
 LOCAL_CPPFLAGS := $(init_cflags)
+
+ifeq ($(TARGET_INIT_PARSE_PROC_CPUINFO),true)
+LOCAL_CFLAGS += -DPARSE_PROC_CPUINFO
+endif
+
 LOCAL_SRC_FILES:= \
     action.cpp \
     import_parser.cpp \
@@ -97,6 +102,10 @@ endif
 
 ifneq ($(TARGET_IGNORE_RO_BOOT_REVISION),)
 LOCAL_CFLAGS += -DIGNORE_RO_BOOT_REVISION
+endif
+
+ifeq ($(TARGET_INIT_PARSE_PROC_CPUINFO),true)
+LOCAL_CFLAGS += -DPARSE_PROC_CPUINFO
 endif
 
 LOCAL_MODULE:= init
