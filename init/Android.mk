@@ -110,6 +110,9 @@ endif
 
 ifeq ($(TARGET_INIT_PARSE_PROC_CPUINFO),true)
 LOCAL_CFLAGS += -DPARSE_PROC_CPUINFO
+
+ifeq ($(KERNEL_HAS_FINIT_MODULE), false)
+LOCAL_CFLAGS += -DNO_FINIT_MODULE
 endif
 
 LOCAL_MODULE:= init
@@ -123,7 +126,7 @@ LOCAL_UNSTRIPPED_PATH := $(TARGET_ROOT_OUT_UNSTRIPPED)
 
 LOCAL_STATIC_LIBRARIES := \
     libinit \
-    libbootloader_message_writer \
+    libbootloader_message \
     libfs_mgr \
     libfec \
     libfec_rs \
