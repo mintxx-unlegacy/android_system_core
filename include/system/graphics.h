@@ -451,6 +451,7 @@ typedef enum android_pixel_format {
     HAL_PIXEL_FORMAT_YCrCb_420_SP_TILED = 0x22,
     HAL_PIXEL_FORMAT_YCrCb_422_SP       = 0x23,
     HAL_PIXEL_FORMAT_YCrCb_420_P  = 0x24,
+} android_pixel_format_t;
 
 /*
  * Structure for describing YCbCr formats for consumption by applications.
