@@ -359,7 +359,7 @@ static void export_kernel_boot_props() {
 	static unsigned revision = 0;
 	
 	char tmp[128];
-	
+
     struct {
         const char *src_prop;
         const char *dst_prop;
@@ -382,7 +382,6 @@ static void export_kernel_boot_props() {
         std::string value = property_get(prop_map[i].src_prop);
         property_set(prop_map[i].dst_prop, (!value.empty()) ? value.c_str() : prop_map[i].default_value);
     }
-    
     
    get_hardware_name(hardware, &revision);
 
