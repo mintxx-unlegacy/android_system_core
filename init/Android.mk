@@ -80,6 +80,11 @@ LOCAL_SRC_FILES:= \
     ueventd.cpp \
     ueventd_parser.cpp \
     watchdogd.cpp \
+    vendor_init.cpp
+
+ifeq ($(TARGET_INIT_PARSE_PROC_CPUINFO),true)
+LOCAL_CFLAGS += -DPARSE_PROC_CPUINFO
+endif
 
 LOCAL_MODULE:= init
 LOCAL_C_INCLUDES += \
