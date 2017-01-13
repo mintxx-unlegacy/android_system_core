@@ -382,8 +382,7 @@ static void export_kernel_boot_props() {
         std::string value = property_get(prop_map[i].src_prop);
         property_set(prop_map[i].dst_prop, (!value.empty()) ? value.c_str() : prop_map[i].default_value);
     }
-    
-    
+
    get_hardware_name(hardware, &revision);
 
    /* if this was given on kernel command line, override what we read
