@@ -72,6 +72,9 @@ unsigned int decode_uid(const char *s);
 int mkdir_recursive(const char *pathname, mode_t mode);
 void sanitize(char *p);
 int wait_for_file(const char *filename, std::chrono::nanoseconds timeout);
+#ifdef PARSE_PROC_CPUINFO
+void get_hardware_name(char *hardware, unsigned int *revision);
+#endif
 void import_kernel_cmdline(bool in_qemu,
                            const std::function<void(const std::string&, const std::string&, bool)>&);
 int make_dir(const char *path, mode_t mode);
