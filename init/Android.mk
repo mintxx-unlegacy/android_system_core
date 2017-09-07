@@ -59,6 +59,11 @@ include $(BUILD_HOST_NATIVE_TEST)
 endif
 
 include $(CLEAR_VARS)
+
+ifeq ($(TARGET_INIT_PARSE_PROC_CPUINFO),true)
+LOCAL_CFLAGS += -DPARSE_PROC_CPUINFO
+endif
+
 LOCAL_CPPFLAGS := $(init_cflags)
 LOCAL_SRC_FILES:= \
     action.cpp \
@@ -80,6 +85,15 @@ include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_CPPFLAGS := $(init_cflags)
+
+ifeq ($(TARGET_INIT_PARSE_PROC_CPUINFO),true)
+LOCAL_CFLAGS += -DPARSE_PROC_CPUINFO
+endif
+
+ifeq ($(SERVICES_WITHOUT_SELINUX_DOMAIN),true)
+LOCAL_CFLAGS += -DWITHOUT_SELINUX_DOMAIN
+endif
+
 LOCAL_SRC_FILES:= \
     bootchart.cpp \
     builtins.cpp \

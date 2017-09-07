@@ -466,6 +466,9 @@ static void export_oem_lock_status() {
 }
 
 static void export_kernel_boot_props() {
+ 	static char hardware[32];
+ 	static unsigned revision = 0;
+	char tmp[128];
     struct {
         const char *src_prop;
         const char *dst_prop;
@@ -475,13 +478,32 @@ static void export_kernel_boot_props() {
         { "ro.boot.mode",       "ro.bootmode",   "unknown", },
         { "ro.boot.baseband",   "ro.baseband",   "unknown", },
         { "ro.boot.bootloader", "ro.bootloader", "unknown", },
+#ifndef PARSE_PROC_CPUINFO
         { "ro.boot.hardware",   "ro.hardware",   "unknown", },
+#ifndef IGNORE_RO_BOOT_REVISION
         { "ro.boot.revision",   "ro.revision",   "0", },
+#endif
+#else
     };
     for (size_t i = 0; i < arraysize(prop_map); i++) {
         std::string value = GetProperty(prop_map[i].src_prop, "");
         property_set(prop_map[i].dst_prop, (!value.empty()) ? value.c_str() : prop_map[i].default_value);
     }
+    
+   get_hardware_name(hardware, &revision);
+
+   /* if this was given on kernel command line, override what we read
+    * before (e.g. from /proc/cpuinfo), if anything */
+   std::string value = GetProperty("ro.boot.hardware","");
+   if (!value.empty())
+       strlcpy(hardware, tmp, sizeof(hardware));
+   property_set("ro.hardware", hardware);
+
+   value = GetProperty("ro.boot.revision", "");
+   if (value.empty())
+       snprintf(tmp, PROP_VALUE_MAX, "%d", revision);
+   property_set("ro.revision", tmp);
+#endif //PARSE_PROC_CPUINFO
 }
 
 static void process_kernel_dt() {
