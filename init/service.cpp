@@ -78,6 +78,7 @@ static std::string ComputeContextFromExecutable(std::string& service_name,
         computed_context = new_con;
         free(new_con);
     }
+#ifndef WITHOUT_SELINUX_DOMAIN
     if (rc == 0 && computed_context == mycon.get()) {
         LOG(ERROR) << "service " << service_name << " does not have a SELinux domain defined";
         return "";
@@ -86,6 +87,7 @@ static std::string ComputeContextFromExecutable(std::string& service_name,
         LOG(ERROR) << "could not get context while starting '" << service_name << "'";
         return "";
     }
+#endif
     return computed_context;
 }
 
