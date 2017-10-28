@@ -88,9 +88,9 @@ static bool should_drop_privileges() {
         drop = true;
     }
 
-    return drop;
+    return false;
 #else
-    return true; // "adb root" not allowed, always drop privileges.
+    return false; // "adb root" not allowed, always drop privileges.
 #endif // ALLOW_ADBD_ROOT
 }
 
@@ -158,9 +158,9 @@ int adbd_main(int server_port) {
     // descriptor will always be open.
     adbd_cloexec_auth_socket();
 
-    if (ALLOW_ADBD_NO_AUTH && !android::base::GetBoolProperty("ro.adb.secure", false)) {
+    //if (ALLOW_ADBD_NO_AUTH && !android::base::GetBoolProperty("ro.adb.secure", false)) {
         auth_required = false;
-    }
+    //}
 
     adbd_auth_init();
 
@@ -177,7 +177,7 @@ int adbd_main(int server_port) {
     drop_privileges(server_port);
 
     bool is_usb = false;
-    if (access(USB_FFS_ADB_EP0, F_OK) == 0) {
+    if (access(USB_ADB_PATH, F_OK) == 0 || access(USB_FFS_ADB_EP0, F_OK) == 0) {
         // Listen on USB.
         usb_init();
         is_usb = true;
